@@ -38,4 +38,24 @@ class DBhelper {
     var res = database!.rawQuery(qry);
     return res;
   }
+
+  void deletDB(int id) async {
+    database = await checkDB();
+    database!.delete("Student", where: "id=$id");
+  }
+
+  void updateDB(
+      int id, String name, String no, String std, String Address) async {
+    database = await checkDB();
+    database!.update(
+        "Student",
+        {
+          "name": name,
+          "no": no,
+          "std": std,
+          "Address": Address,
+        },
+        where: "id=?",
+        whereArgs: [id]);
+  }
 }
