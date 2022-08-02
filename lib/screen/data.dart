@@ -32,7 +32,7 @@ class DBhelper {
         "Student", {"name": name, "no": no, "std": std, "Address": Address});
   }
 
-  Future<Future<List<Map<String, Object?>>>> readDB() async {
+  Future<List<Map<String, dynamic>>> readDB() async {
     database = await checkDB();
     String qry = "SELECT * FROM Student";
     var res = database!.rawQuery(qry);
