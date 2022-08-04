@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:database/screen/data.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Student extends StatefulWidget {
   const Student({Key? key}) : super(key: key);
@@ -14,6 +17,7 @@ class _StudentState extends State<Student> {
   TextEditingController T_no = TextEditingController();
   TextEditingController T_std = TextEditingController();
   TextEditingController T_address = TextEditingController();
+  XFile? f1;
 
   @override
   void initState() {
@@ -37,10 +41,20 @@ class _StudentState extends State<Student> {
           child: Column(
             children: [
               ElevatedButton(
+                  onPressed: () async {
+                    ImagePicker picker = ImagePicker();
+                    f1 = await picker.pickImage(source: ImageSource.gallery);
+                  },
+                  child: Text("Pick Image")),
+              ElevatedButton(
                 child: Text("Insert"),
                 onPressed: () async {
+                  String imgdata = base64Encode(
+                    await f1!.readAsBytes(),
+                  );
                   DBhelper db = DBhelper();
-                  var res = await db.insert("Krinal", "1234", "10", "Surat");
+                  var res = await db.insert(
+                      "Krinal", "1234", "10", "Surat", "$imgdata");
                   getData();
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text("$res")));
@@ -56,9 +70,14 @@ class _StudentState extends State<Student> {
                         subtitle: Text(
                             "${l2[index]['no']},${l2[index]['std']},${l2[index]['Address']}"),
                         trailing: SizedBox(
-                          width: 100,
+                          width: 150,
                           child: Row(
                             children: [
+                              Container(
+                                height:20,
+                                  width: 20,
+                                  child: Image.memory(
+                                      base64Decode(l2[index]['img']))),
                               IconButton(
                                 onPressed: () {
                                   T_name = TextEditingController(

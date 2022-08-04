@@ -21,15 +21,15 @@ class DBhelper {
     String path = join(Dr.path, "Flluter.db");
     return openDatabase(path, version: 1, onCreate: (db, version) {
       String quary =
-          "CREATE TABLE Student(id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT,no TEXT,std TEXT,Address TEXT)";
+          "CREATE TABLE Student(id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT,no TEXT,std TEXT,Address TEXT,img TEXT)";
       db.execute(quary);
     });
   }
 
-  Future<int> insert(String name, String no, String std, String Address) async {
+  Future<int> insert(String name, String no, String std, String Address,String img) async {
     database = await checkDB();
     return await database!.insert(
-        "Student", {"name": name, "no": no, "std": std, "Address": Address});
+        "Student", {"name": name, "no": no, "std": std, "Address": Address,"img":img});
   }
 
   Future<List<Map<String, dynamic>>> readDB() async {
