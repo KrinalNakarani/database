@@ -26,15 +26,21 @@ class DBhelper {
     });
   }
 
-  Future<int> insert(String name, String no, String std, String Address,String img) async {
+  Future<int> insert(
+      String name, String no, String std, String Address, String img) async {
     database = await checkDB();
-    return await database!.insert(
-        "Student", {"name": name, "no": no, "std": std, "Address": Address,"img":img});
+    return await database!.insert("Student",
+        {"name": name, "no": no, "std": std, "Address": Address, "img": img});
   }
 
-  Future<List<Map<String, dynamic>>> readDB() async {
+  Future<List<Map<String, dynamic>>> readDB(String? std) async {
     database = await checkDB();
-    String qry = "SELECT * FROM Student";
+    String qry = "";
+    if (std != null) {
+      qry = "SELECT * FROM Student WHERE std = $std";
+    } else {
+      qry = "SELECT * FROM Student";
+    }
     var res = database!.rawQuery(qry);
     return res;
   }

@@ -18,6 +18,7 @@ class _StudentState extends State<Student> {
   TextEditingController T_std = TextEditingController();
   TextEditingController T_address = TextEditingController();
   XFile? f1;
+  String LiveData = "";
 
   @override
   void initState() {
@@ -25,18 +26,51 @@ class _StudentState extends State<Student> {
     getData();
   }
 
-  void getData() async {
+  Future<List<Map<String, dynamic>>> getData({String? std}) async {
     DBhelper dbHelper = DBhelper();
-    List<Map<String, dynamic>> l1 = await dbHelper.readDB();
+    List<Map<String, dynamic>> l1 = await dbHelper.readDB(std);
     setState(() {
       l2 = l1;
     });
+    return l1;
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          actions: [
+            PopupMenuButton(itemBuilder: (context) {
+              return [
+                PopupMenuItem(
+                    child: InkWell(
+                        onTap: () {
+                          getData(std: "8");
+                        },
+                        child: Text("8"))),
+                PopupMenuItem(
+                    child: InkWell(
+                        onTap: () {
+                          getData(std: "9");
+                        },
+                        child: Text("9"))),
+                PopupMenuItem(
+                    child: InkWell(
+                        onTap: () {
+                          getData(std: "10");
+                        },
+                        child: Text("10"))),
+                PopupMenuItem(
+                    child: InkWell(
+                        onTap: () {
+                          getData(std: "11");
+                        },
+                        child: Text("11"))),
+              ];
+            })
+          ],
+        ),
         body: Center(
           child: Column(
             children: [
@@ -60,6 +94,22 @@ class _StudentState extends State<Student> {
                       .showSnackBar(SnackBar(content: Text("$res")));
                 },
               ),
+              Card(
+                child: Container(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: "Search",
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        LiveData = value;
+                      });
+                      Search(LiveData);
+                    },
+                  ),
+                ),
+              ),
               Expanded(
                 child: ListView.builder(
                     itemCount: l2.length,
@@ -74,10 +124,14 @@ class _StudentState extends State<Student> {
                           child: Row(
                             children: [
                               Container(
-                                height:20,
+                                  height: 20,
                                   width: 20,
-                                  child: Image.memory(
-                                      base64Decode(l2[index]['img']))),
+                                  child: Container(
+                                    height: 30,
+                                    width: 30,
+                                    child: Image.memory(
+                                        base64Decode(l2[index]['img'])),
+                                  )),
                               IconButton(
                                 onPressed: () {
                                   T_name = TextEditingController(
@@ -121,6 +175,22 @@ class _StudentState extends State<Student> {
         ),
       ),
     );
+  }
+
+  void Search(String latter) async {
+    List<Map<String, dynamic>> data = await getData();
+    List<Map<String, dynamic>> Filtered = [];
+    for (int i = 0; i < data.length; i++) {
+      if (data[i]['name']
+          .toString()
+          .toLowerCase()
+          .contains(latter.toLowerCase())) {
+        Filtered.add(data[i]);
+        setState(() {
+          l2 = Filtered;
+        });
+      }
+    }
   }
 
   void updateDielog(int id) {
